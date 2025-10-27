@@ -6,12 +6,13 @@
 
 .admin-sidebar {
   width: 250px;
-  background: #2c3e50;
+  background: #0f172a;
   color: white;
   display: flex;
   flex-direction: column;
   position: fixed;
   height: 100vh;
+  z-index: 1000;
 }
 
 .admin-content {
@@ -50,7 +51,7 @@
 
 .sidebar-footer a {
   display: block;
-  color: #3498db;
+  color: #06b6d4;
   margin-bottom: 10px;
   text-decoration: none;
 }
@@ -71,7 +72,8 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  padding: 20px;
 }
 
 .login-container {
@@ -84,13 +86,15 @@
 
 .login-container h1 {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .login-container .marathi {
   text-align: center;
-  color: #667eea;
+  color: #0891b2;
   margin-bottom: 30px;
+  margin-top: 0;
+  display: block;
 }
 
 .back-link {
@@ -99,7 +103,7 @@
 }
 
 .back-link a {
-  color: #667eea;
+  color: #0891b2;
   text-decoration: none;
 }
 
@@ -119,7 +123,7 @@
 }
 
 .subtitle {
-  color: #667eea;
+  color: #0891b2;
   margin-top: -10px;
   margin-bottom: 20px;
 }
@@ -163,7 +167,7 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #0891b2;
 }
 
 .checkbox-label {
@@ -182,13 +186,18 @@
 
 .btn-primary {
   padding: 12px 24px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   text-decoration: none;
   display: inline-block;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background: #0e7490;
 }
 
 .btn-primary:disabled {
@@ -233,7 +242,7 @@
 .stat-number {
   font-size: 36px;
   font-weight: bold;
-  color: #667eea;
+  color: #0891b2;
   margin: 0;
 }
 
@@ -267,7 +276,7 @@
   padding: 4px 12px;
   border-radius: 12px;
   font-size: 12px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
 }
 
@@ -281,7 +290,7 @@
 
 .btn-edit {
   padding: 6px 12px;
-  background: #3498db;
+  background: #0891b2;
   color: white;
   border: none;
   border-radius: 4px;
@@ -290,6 +299,11 @@
   text-decoration: none;
   display: inline-block;
   margin-right: 5px;
+  transition: background 0.3s;
+}
+
+.btn-edit:hover {
+  background: #0e7490;
 }
 
 .btn-delete {
@@ -326,7 +340,7 @@
 .stop-number {
   width: 32px;
   height: 32px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -375,4 +389,158 @@
   padding: 12px;
   border-radius: 5px;
   margin-bottom: 20px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 100%;
+    position: relative;
+    height: auto;
+  }
+
+  .admin-content {
+    margin-left: 0;
+    padding: 20px 15px;
+  }
+
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  /* Login */
+  .login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px 20px;
+  }
+
+  .login-container h1 {
+    font-size: 24px;
+  }
+
+  /* Admin Pages */
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .page-header h1 {
+    font-size: 24px;
+  }
+
+  /* Forms */
+  .admin-form {
+    padding: 20px 15px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+
+  /* Dashboard */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .stat-number {
+    font-size: 28px;
+  }
+
+  /* Tables */
+  .data-table {
+    font-size: 14px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px 8px;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .data-table td {
+    display: block;
+    text-align: right;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .data-table td:last-child {
+    border-bottom: none;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    float: left;
+    font-weight: 600;
+  }
+
+  /* Route Creation */
+  .stop-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .stop-inputs {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .stop-inputs input {
+    width: 100%;
+  }
+
+  /* Buttons */
+  .btn-edit,
+  .btn-delete {
+    margin-bottom: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-content {
+    padding: 15px 10px;
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+  }
+
+  .stat-card h3 {
+    font-size: 12px;
+  }
+
+  .stat-number {
+    font-size: 24px;
+  }
 }

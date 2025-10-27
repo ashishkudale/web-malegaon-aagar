@@ -24,7 +24,7 @@ body {
 }
 
 .marathi {
-  color: #667eea;
+  color: #0891b2;
   font-weight: 500;
 }
 
@@ -54,12 +54,13 @@ body {
 
 .logo h1 {
   font-size: 24px;
-  margin: 0;
+  margin: 0 0 8px 0;
 }
 
 .logo .marathi {
   font-size: 14px;
-  margin-top: -5px;
+  margin-top: 0;
+  display: block;
 }
 
 .main-header nav {
@@ -75,12 +76,12 @@ body {
 }
 
 .main-header nav a:hover {
-  color: #667eea;
+  color: #0891b2;
 }
 
 /* Footer */
 .main-footer {
-  background: #2c3e50;
+  background: #0f172a;
   color: white;
   padding: 30px 20px;
   margin-top: auto;
@@ -95,13 +96,13 @@ body {
 }
 
 .footer-content a {
-  color: #667eea;
+  color: #06b6d4;
   text-decoration: none;
 }
 
 /* Home Hero */
 .home-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
   color: white;
   padding: 100px 20px;
   text-align: center;
@@ -109,12 +110,13 @@ body {
 
 .hero-content h1 {
   font-size: 48px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .hero-content h2 {
   font-size: 32px;
   margin-bottom: 20px;
+  margin-top: 0;
   color: rgba(255,255,255,0.9);
 }
 
@@ -132,7 +134,7 @@ body {
 .btn-large {
   padding: 15px 40px;
   background: white;
-  color: #667eea;
+  color: #0891b2;
   text-decoration: none;
   border-radius: 8px;
   font-size: 18px;
@@ -208,7 +210,7 @@ body {
 .back-link {
   display: inline-block;
   margin-bottom: 30px;
-  color: #667eea;
+  color: #0891b2;
   text-decoration: none;
   font-weight: 500;
 }
@@ -241,7 +243,7 @@ body {
 .route-number {
   width: 60px;
   height: 60px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
   border-radius: 12px;
   display: flex;
@@ -271,8 +273,8 @@ body {
 .badge {
   display: inline-block;
   padding: 4px 12px;
-  background: #e0e7ff;
-  color: #667eea;
+  background: #cffafe;
+  color: #0891b2;
   border-radius: 12px;
   font-size: 12px;
   text-transform: capitalize;
@@ -285,7 +287,7 @@ body {
 
 .arrow {
   font-size: 24px;
-  color: #667eea;
+  color: #0891b2;
 }
 
 /* Route Details */
@@ -303,7 +305,7 @@ body {
 .route-badge {
   width: 80px;
   height: 80px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
   border-radius: 16px;
   display: flex;
@@ -349,7 +351,7 @@ body {
 .stop-sequence {
   width: 40px;
   height: 40px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -435,7 +437,7 @@ body {
 
 .search-select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #0891b2;
 }
 
 .search-arrow {
@@ -447,7 +449,7 @@ body {
 .btn-search {
   width: 100%;
   padding: 18px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
   border: none;
   border-radius: 8px;
@@ -458,7 +460,7 @@ body {
 }
 
 .btn-search:hover {
-  background: #5568d3;
+  background: #0e7490;
 }
 
 .btn-search:disabled {
@@ -476,7 +478,7 @@ body {
 }
 
 .results-count {
-  background: #e0e7ff;
+  background: #cffafe;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 30px;
@@ -555,7 +557,7 @@ body {
 .journey-number {
   width: 24px;
   height: 24px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
   border-radius: 50%;
   display: flex;
@@ -566,7 +568,7 @@ body {
 }
 
 .journey-arrow {
-  color: #667eea;
+  color: #0891b2;
   font-weight: bold;
 }
 
@@ -580,7 +582,7 @@ body {
   display: inline-block;
   margin-top: 20px;
   padding: 12px 24px;
-  background: #667eea;
+  background: #0891b2;
   color: white;
   text-decoration: none;
   border-radius: 8px;
@@ -589,7 +591,7 @@ body {
 }
 
 .view-details-btn:hover {
-  background: #5568d3;
+  background: #0e7490;
 }
 
 .loading {
@@ -601,35 +603,187 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+
   .header-content {
     flex-direction: column;
     height: auto;
-    padding: 20px;
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .logo h1 {
+    font-size: 20px;
   }
 
   .main-header nav {
-    margin-top: 15px;
+    margin-top: 10px;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .main-header nav a {
+    font-size: 14px;
+  }
+
+  /* Hero Section */
+  .home-hero {
+    padding: 60px 15px;
   }
 
   .hero-content h1 {
-    font-size: 32px;
+    font-size: 28px;
+  }
+
+  .hero-content h2 {
+    font-size: 20px;
+  }
+
+  .hero-content p {
+    font-size: 16px;
   }
 
   .cta-buttons {
     flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn-large {
+    padding: 12px 30px;
+    font-size: 16px;
+  }
+
+  /* Features */
+  .features-section {
+    padding: 40px 15px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .feature-box {
+    padding: 30px 20px;
+  }
+
+  /* Page Content */
+  .page-content {
+    padding: 30px 15px;
+  }
+
+  .page-title h1 {
+    font-size: 28px;
   }
 
   .routes-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
 
+  .route-card {
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+
+  .route-number {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .route-meta {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* Route Details */
   .route-detail-header {
     flex-direction: column;
     text-align: center;
+    padding: 25px 20px;
+  }
+
+  .route-badge {
+    width: 70px;
+    height: 70px;
+    font-size: 28px;
+  }
+
+  .route-detail-meta {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .stops-section {
+    padding: 25px 20px;
+  }
+
+  .stop-detail-item {
+    gap: 15px;
+  }
+
+  /* Search */
+  .search-box {
+    padding: 25px 20px;
+  }
+
+  .search-form {
+    padding: 0;
+  }
+
+  .search-result-card {
+    padding: 20px 15px;
+  }
+
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
   }
 
   .journey-stops {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .journey-stop {
+    padding: 8px 12px;
+  }
+
+  /* Footer */
+  .footer-content {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 24px;
+  }
+
+  .hero-content h2 {
+    font-size: 18px;
+  }
+
+  .page-title h1 {
+    font-size: 24px;
+  }
+
+  .route-detail-header h1 {
+    font-size: 22px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
   }
 }
