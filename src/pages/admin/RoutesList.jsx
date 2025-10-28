@@ -39,7 +39,7 @@ const RoutesList = () => {
       <div className="page-header">
         <div>
           <h1>Manage Routes</h1>
-          <p>Total: {routes.length}</p>
+          <p style={{ marginTop: '12px' }}>Total: {routes.length}</p>
         </div>
         <Link to="/admin/routes/create" className="btn-primary">Create Route</Link>
       </div>

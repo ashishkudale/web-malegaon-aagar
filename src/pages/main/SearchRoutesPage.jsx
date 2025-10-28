@@ -121,8 +121,8 @@ const SearchRoutesPage = () => {
               <h2>Search Results</h2>
               {searchResults.length === 0 ? (
                 <div className="no-results">
-                  <p>😔 No direct routes found between these stops.</p>
-                  <p className="marathi">या स्टॉप दरम्यान कोणतेही थेट मार्ग आढळले नाहीत.</p>
+                  <p>😔 No routes found between these stops.</p>
+                  <p className="marathi">या स्टॉप दरम्यान कोणतेही मार्ग आढळले नाहीत.</p>
                 </div>
               ) : (
                 <>
@@ -131,38 +131,119 @@ const SearchRoutesPage = () => {
                   </p>
 
                   <div className="routes-list">
-                    {searchResults.map(route => (
-                      <div key={route.id} className="search-result-card">
-                        <div className="result-header">
-                          <div className="route-badge">{route.routeNumber}</div>
-                          <div>
-                            <h3>{route.routeNameEnglish}</h3>
-                            <p className="marathi">{route.routeNameMarathi}</p>
-                          </div>
-                          <div className="result-fare">₹{route.fare}</div>
-                        </div>
-
-                        <div className="result-journey">
-                          <p><strong>Your Journey:</strong></p>
-                          <div className="journey-stops">
-                            {route.stopsInJourney.map((stop, index) => (
-                              <div key={stop.id} className="journey-stop">
-                                <span className="journey-number">{index + 1}</span>
-                                <span>{stop.stopDetails.stopNameEnglish}</span>
-                                {index < route.stopsInJourney.length - 1 && (
-                                  <span className="journey-arrow">→</span>
-                                )}
+                    {searchResults.map((route, idx) => (
+                      <div key={route.id || `connecting-${idx}`} className="search-result-card">
+                        {route.routeType === 'direct' ? (
+                          // Direct route display
+                          <>
+                            <div className="result-header">
+                              <div className="route-badge">{route.routeNumber}</div>
+                              <div>
+                                <h3>{route.routeNameEnglish}</h3>
+                                <p className="marathi">{route.routeNameMarathi}</p>
                               </div>
-                            ))}
-                          </div>
-                          <p className="stops-count">
-                            {route.stopsInJourney.length} stops
-                          </p>
-                        </div>
+                              <div className="result-fare">₹{route.fare}</div>
+                            </div>
 
-                        <Link to={`/routes/${route.id}`} className="view-details-btn">
-                          View Full Route Details →
-                        </Link>
+                            {route.direction === 'reverse' && (
+                              <div className="route-note" style={{ padding: '8px', backgroundColor: '#fff3cd', borderRadius: '4px', marginBottom: '12px' }}>
+                                ⚠️ {route.note}
+                              </div>
+                            )}
+
+                            <div className="result-journey">
+                              <p><strong>Your Journey:</strong></p>
+                              <div className="journey-stops">
+                                {route.stopsInJourney.map((stop, index) => (
+                                  <div key={stop.id} className="journey-stop">
+                                    <span className="journey-number">{index + 1}</span>
+                                    <span>{stop.stopDetails.stopNameEnglish}</span>
+                                    {index < route.stopsInJourney.length - 1 && (
+                                      <span className="journey-arrow">→</span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                              <p className="stops-count">
+                                {route.stopsInJourney.length} stops
+                              </p>
+                            </div>
+
+                            <Link to={`/routes/${route.id}`} className="view-details-btn">
+                              View Full Route Details →
+                            </Link>
+                          </>
+                        ) : (
+                          // Connecting route display
+                          <>
+                            <div className="result-header" style={{ backgroundColor: '#e3f2fd' }}>
+                              <div style={{ flex: 1 }}>
+                                <h3 style={{ marginBottom: '4px' }}>🔄 Connecting Route (1 Transfer)</h3>
+                                <p style={{ fontSize: '14px', color: '#666' }}>बदली मार्ग</p>
+                              </div>
+                              <div className="result-fare">₹{route.totalFare}</div>
+                            </div>
+
+                            <div className="result-journey">
+                              {/* First Leg */}
+                              <div style={{ marginBottom: '16px' }}>
+                                <p><strong>Leg 1: Route {route.leg1.routeNumber}</strong></p>
+                                <div className="journey-stops">
+                                  {route.leg1.stopsInJourney.map((stop, index) => (
+                                    <div key={stop.id} className="journey-stop">
+                                      <span className="journey-number">{index + 1}</span>
+                                      <span>{stop.stopDetails.stopNameEnglish}</span>
+                                      {index < route.leg1.stopsInJourney.length - 1 && (
+                                        <span className="journey-arrow">→</span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                                <p style={{ fontSize: '14px', color: '#666', marginTop: '4px' }}>
+                                  {route.leg1.stopsInJourney.length} stops · ₹{route.leg1.fare}
+                                </p>
+                              </div>
+
+                              {/* Transfer Point */}
+                              <div style={{ padding: '12px', backgroundColor: '#fff9c4', borderRadius: '4px', marginBottom: '16px', textAlign: 'center' }}>
+                                <strong>🚏 Transfer at: {route.transferStop.stopDetails.stopNameEnglish}</strong>
+                                <p style={{ fontSize: '13px', marginTop: '4px' }}>बदली करा</p>
+                              </div>
+
+                              {/* Second Leg */}
+                              <div>
+                                <p><strong>Leg 2: Route {route.leg2.routeNumber}</strong></p>
+                                <div className="journey-stops">
+                                  {route.leg2.stopsInJourney.map((stop, index) => (
+                                    <div key={stop.id} className="journey-stop">
+                                      <span className="journey-number">{index + 1}</span>
+                                      <span>{stop.stopDetails.stopNameEnglish}</span>
+                                      {index < route.leg2.stopsInJourney.length - 1 && (
+                                        <span className="journey-arrow">→</span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                                <p style={{ fontSize: '14px', color: '#666', marginTop: '4px' }}>
+                                  {route.leg2.stopsInJourney.length} stops · ₹{route.leg2.fare}
+                                </p>
+                              </div>
+
+                              <p className="stops-count" style={{ marginTop: '12px' }}>
+                                Total: {route.leg1.stopsInJourney.length + route.leg2.stopsInJourney.length - 1} stops · 1 transfer
+                              </p>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <Link to={`/routes/${route.leg1.id}`} className="view-details-btn" style={{ flex: 1 }}>
+                                View Route {route.leg1.routeNumber} →
+                              </Link>
+                              <Link to={`/routes/${route.leg2.id}`} className="view-details-btn" style={{ flex: 1 }}>
+                                View Route {route.leg2.routeNumber} →
+                              </Link>
+                            </div>
+                          </>
+                        )}
                       </div>
                     ))}
                   </div>

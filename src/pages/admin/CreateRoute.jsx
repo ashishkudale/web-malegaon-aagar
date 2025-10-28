@@ -99,7 +99,7 @@ const CreateRoute = () => {
   return (
     <div className="admin-page">
       <h1>Create New Route</h1>
-      <p className="subtitle">नवीन मार्ग तयार करा</p>
+      <p className="subtitle" style={{ marginTop: '12px' }}>नवीन मार्ग तयार करा</p>
 
       <form onSubmit={handleSubmit} className="admin-form">
         <div className="form-row">

@@ -39,7 +39,7 @@ const StopsList = () => {
       <div className="page-header">
         <div>
           <h1>Manage Stops</h1>
-          <p>Total: {stops.length}</p>
+          <p style={{ marginTop: '12px' }}>Total: {stops.length}</p>
         </div>
         <Link to="/admin/stops/add" className="btn-primary">Add Stop</Link>
       </div>

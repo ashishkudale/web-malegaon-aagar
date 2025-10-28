@@ -52,7 +52,7 @@ const AddStop = () => {
   return (
     <div className="admin-page">
       <h1>Add New Stop</h1>
-      <p className="subtitle">नवीन स्टॉप जोडा</p>
+      <p className="subtitle" style={{ marginTop: '12px' }}>नवीन स्टॉप जोडा</p>
 
       <form onSubmit={handleSubmit} className="admin-form">
         <div className="form-row">
