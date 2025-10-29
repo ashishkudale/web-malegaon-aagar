@@ -19,10 +19,25 @@ const Sidebar = () => {
 
       <nav className="sidebar-nav">
         <Link to="/admin/dashboard">Dashboard</Link>
-        <Link to="/admin/stops">Manage Stops</Link>
-        <Link to="/admin/stops/add">Add Stop</Link>
-        <Link to="/admin/routes">Manage Routes</Link>
-        <Link to="/admin/routes/create">Create Route</Link>
+
+        <div className="nav-section">
+          <p className="nav-section-title">Stops Management</p>
+          <Link to="/admin/stops">Manage Stops</Link>
+          <Link to="/admin/stops/add">Add Stop</Link>
+        </div>
+
+        <div className="nav-section">
+          <p className="nav-section-title">Routes Management</p>
+          <Link to="/admin/routes">Manage Routes</Link>
+          <Link to="/admin/routes/create">Create Route</Link>
+        </div>
+
+        <div className="nav-section">
+          <p className="nav-section-title">Graph Management</p>
+          <Link to="/admin/connections">All Connections</Link>
+          <Link to="/admin/connections/add">Add Connection</Link>
+          <Link to="/admin/graph">Visualize Graph</Link>
+        </div>
       </nav>
 
       <div className="sidebar-footer">

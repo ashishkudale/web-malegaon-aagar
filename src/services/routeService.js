@@ -105,130 +105,212 @@ export const routeService = {
     }
   },
 
-  // Search routes between two stops
+  // ===== ENHANCED SEARCH WITH TRANSFERS =====
+
+  // Search routes between two stops (with transfers)
   searchRoutes: async (fromStopId, toStopId) => {
-    // Get all routes
+    console.log('🔍 Searching routes from', fromStopId, 'to', toStopId);
+
+    // Get all routes with their stops
     const allRoutes = await routeService.getAllRoutes();
+    console.log('📋 Total routes found:', allRoutes.length);
+
+    const routesWithStops = await Promise.all(
+      allRoutes.map(route => routeService.getRouteById(route.id))
+    );
+
+    console.log('📋 Routes with stops loaded:', routesWithStops.length);
+    routesWithStops.forEach(route => {
+      console.log(`Route ${route.routeNumber}: ${route.stops.length} stops`);
+      console.log('Stop IDs:', route.stops.map(s => s.stopId));
+    });
+
+    // Find direct routes (no transfer needed)
+    const directRoutes = routeService._findDirectRoutes(
+      routesWithStops,
+      fromStopId,
+      toStopId
+    );
+
+    // Find routes with one transfer
+    const transferRoutes = routeService._findTransferRoutes(
+      routesWithStops,
+      fromStopId,
+      toStopId
+    );
+
+    // Combine and sort results
+    const allResults = [...directRoutes, ...transferRoutes];
+
+    // Sort by: Direct routes first, then by number of stops
+    allResults.sort((a, b) => {
+      if (a.isDirect && !b.isDirect) return -1;
+      if (!a.isDirect && b.isDirect) return 1;
+      return a.totalStops - b.totalStops;
+    });
+
+    console.log(`✅ Found ${allResults.length} routes (${directRoutes.length} direct, ${transferRoutes.length} with transfer)`);
+
+    return allResults;
+  },
+
+  // Find direct routes (no transfer)
+  _findDirectRoutes: (routesWithStops, fromStopId, toStopId) => {
     const directRoutes = [];
-    const connectingRoutes = [];
 
-    // Find direct routes (including reverse direction)
-    for (const route of allRoutes) {
-      // Get stops for this route
-      const routeWithStops = await routeService.getRouteById(route.id);
-
-      // Find from and to stop positions
-      const fromIndex = routeWithStops.stops.findIndex(s => s.stopId === fromStopId);
-      const toIndex = routeWithStops.stops.findIndex(s => s.stopId === toStopId);
+    for (const route of routesWithStops) {
+      const fromIndex = route.stops.findIndex(s => s.stopId === fromStopId);
+      const toIndex = route.stops.findIndex(s => s.stopId === toStopId);
 
       // Check if route contains both stops in correct order (forward direction)
       if (fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex) {
+        const journeyStops = route.stops.slice(fromIndex, toIndex + 1);
+
         directRoutes.push({
-          ...routeWithStops,
+          type: 'direct',
+          isDirect: true,
+          routes: [route],
           fromStopIndex: fromIndex,
           toStopIndex: toIndex,
-          stopsInJourney: routeWithStops.stops.slice(fromIndex, toIndex + 1),
-          routeType: 'direct',
-          direction: 'forward'
+          journeyStops: journeyStops,
+          totalStops: journeyStops.length,
+          totalDistance: routeService._calculateDistance(journeyStops),
+          totalTime: routeService._calculateTime(journeyStops),
+          routeInfo: {
+            routeId: route.id,
+            routeNumber: route.routeNumber,
+            routeNameEnglish: route.routeNameEnglish,
+            routeNameMarathi: route.routeNameMarathi,
+            fare: route.fare
+          }
         });
       }
       // Check if route contains both stops in reverse order (backward direction)
       else if (fromIndex !== -1 && toIndex !== -1 && toIndex < fromIndex) {
+        const journeyStops = route.stops.slice(toIndex, fromIndex + 1).reverse();
+
         directRoutes.push({
-          ...routeWithStops,
+          type: 'direct',
+          isDirect: true,
+          routes: [route],
           fromStopIndex: toIndex,
           toStopIndex: fromIndex,
-          stopsInJourney: routeWithStops.stops.slice(toIndex, fromIndex + 1).reverse(),
-          routeType: 'direct',
-          direction: 'reverse',
-          note: 'This route runs in the opposite direction'
+          journeyStops: journeyStops,
+          totalStops: journeyStops.length,
+          totalDistance: routeService._calculateDistance(journeyStops),
+          totalTime: routeService._calculateTime(journeyStops),
+          isReverse: true,
+          routeInfo: {
+            routeId: route.id,
+            routeNumber: route.routeNumber,
+            routeNameEnglish: route.routeNameEnglish,
+            routeNameMarathi: route.routeNameMarathi,
+            fare: route.fare,
+            note: '⚠️ This route runs in the opposite direction'
+          }
         });
       }
     }
 
-    // Find connecting routes (routes with one transfer)
-    for (let i = 0; i < allRoutes.length; i++) {
-      for (let j = i + 1; j < allRoutes.length; j++) {
-        const route1WithStops = await routeService.getRouteById(allRoutes[i].id);
-        const route2WithStops = await routeService.getRouteById(allRoutes[j].id);
+    return directRoutes;
+  },
 
-        // Find indices in route1
-        const fromIndexRoute1 = route1WithStops.stops.findIndex(s => s.stopId === fromStopId);
-        const toIndexRoute1 = route1WithStops.stops.findIndex(s => s.stopId === toStopId);
+  // Find routes with one transfer
+  _findTransferRoutes: (routesWithStops, fromStopId, toStopId) => {
+    const transferRoutes = [];
 
-        // Find indices in route2
-        const fromIndexRoute2 = route2WithStops.stops.findIndex(s => s.stopId === fromStopId);
-        const toIndexRoute2 = route2WithStops.stops.findIndex(s => s.stopId === toStopId);
+    // Try each route as first leg
+    for (const route1 of routesWithStops) {
+      const fromIndex1 = route1.stops.findIndex(s => s.stopId === fromStopId);
 
-        // Check all possible combinations for connecting routes
+      // Skip if this route doesn't have the starting stop
+      if (fromIndex1 === -1) continue;
 
-        // Case 1: fromStop on route1, toStop on route2
-        if (fromIndexRoute1 !== -1 && toIndexRoute2 !== -1) {
-          // Find common stops between route1 (after fromStop) and route2 (before toStop)
-          for (let k = fromIndexRoute1; k < route1WithStops.stops.length; k++) {
-            const potentialTransferStopId = route1WithStops.stops[k].stopId;
-            const transferIndexRoute2 = route2WithStops.stops.findIndex(s => s.stopId === potentialTransferStopId);
+      // Get all possible transfer points (stops after fromStop in route1)
+      const possibleTransfers = route1.stops.slice(fromIndex1 + 1);
 
-            if (transferIndexRoute2 !== -1 && transferIndexRoute2 < toIndexRoute2 && k > fromIndexRoute1) {
-              connectingRoutes.push({
-                routeType: 'connecting',
-                route1: route1WithStops,
-                route2: route2WithStops,
-                transferStop: route1WithStops.stops[k],
-                leg1: {
-                  ...route1WithStops,
-                  fromStopIndex: fromIndexRoute1,
-                  toStopIndex: k,
-                  stopsInJourney: route1WithStops.stops.slice(fromIndexRoute1, k + 1)
-                },
-                leg2: {
-                  ...route2WithStops,
-                  fromStopIndex: transferIndexRoute2,
-                  toStopIndex: toIndexRoute2,
-                  stopsInJourney: route2WithStops.stops.slice(transferIndexRoute2, toIndexRoute2 + 1)
-                },
-                totalFare: parseFloat(route1WithStops.fare || 0) + parseFloat(route2WithStops.fare || 0)
-              });
-              break; // Only add the first transfer point to avoid duplicates
-            }
-          }
-        }
+      // Try each route as second leg
+      for (const route2 of routesWithStops) {
+        // Skip same route
+        if (route1.id === route2.id) continue;
 
-        // Case 2: fromStop on route2, toStop on route1
-        if (fromIndexRoute2 !== -1 && toIndexRoute1 !== -1) {
-          // Find common stops between route2 (after fromStop) and route1 (before toStop)
-          for (let k = fromIndexRoute2; k < route2WithStops.stops.length; k++) {
-            const potentialTransferStopId = route2WithStops.stops[k].stopId;
-            const transferIndexRoute1 = route1WithStops.stops.findIndex(s => s.stopId === potentialTransferStopId);
+        const toIndex2 = route2.stops.findIndex(s => s.stopId === toStopId);
 
-            if (transferIndexRoute1 !== -1 && transferIndexRoute1 < toIndexRoute1 && k > fromIndexRoute2) {
-              connectingRoutes.push({
-                routeType: 'connecting',
-                route1: route2WithStops,
-                route2: route1WithStops,
-                transferStop: route2WithStops.stops[k],
-                leg1: {
-                  ...route2WithStops,
-                  fromStopIndex: fromIndexRoute2,
-                  toStopIndex: k,
-                  stopsInJourney: route2WithStops.stops.slice(fromIndexRoute2, k + 1)
-                },
-                leg2: {
-                  ...route1WithStops,
-                  fromStopIndex: transferIndexRoute1,
-                  toStopIndex: toIndexRoute1,
-                  stopsInJourney: route1WithStops.stops.slice(transferIndexRoute1, toIndexRoute1 + 1)
-                },
-                totalFare: parseFloat(route2WithStops.fare || 0) + parseFloat(route1WithStops.fare || 0)
-              });
-              break; // Only add the first transfer point to avoid duplicates
-            }
+        // Skip if second route doesn't have the destination
+        if (toIndex2 === -1) continue;
+
+        // Find common stops (transfer points)
+        for (const transferStop of possibleTransfers) {
+          const transferIndex2 = route2.stops.findIndex(s => s.stopId === transferStop.stopId);
+
+          // Check if transfer stop exists in route2 and comes before destination
+          if (transferIndex2 !== -1 && transferIndex2 < toIndex2) {
+            // We found a valid transfer!
+            const leg1Stops = route1.stops.slice(
+              fromIndex1,
+              route1.stops.findIndex(s => s.stopId === transferStop.stopId) + 1
+            );
+
+            const leg2Stops = route2.stops.slice(
+              transferIndex2,
+              toIndex2 + 1
+            );
+
+            // Combine stops (remove duplicate transfer stop)
+            const allStops = [...leg1Stops, ...leg2Stops.slice(1)];
+
+            transferRoutes.push({
+              type: 'transfer',
+              isDirect: false,
+              routes: [route1, route2],
+              transferPoint: {
+                stopId: transferStop.stopId,
+                stopDetails: transferStop.stopDetails,
+                fromRoute: route1.routeNumber,
+                toRoute: route2.routeNumber
+              },
+              leg1: {
+                route: route1,
+                stops: leg1Stops,
+                fromIndex: fromIndex1,
+                toIndex: route1.stops.findIndex(s => s.stopId === transferStop.stopId)
+              },
+              leg2: {
+                route: route2,
+                stops: leg2Stops,
+                fromIndex: transferIndex2,
+                toIndex: toIndex2
+              },
+              journeyStops: allStops,
+              totalStops: allStops.length,
+              totalDistance: routeService._calculateDistance(allStops),
+              totalTime: routeService._calculateTime(allStops),
+              totalFare: parseFloat(route1.fare) + parseFloat(route2.fare)
+            });
+
+            // Only add the first valid transfer point between these two routes
+            break;
           }
         }
       }
     }
 
-    // Return direct routes first, then connecting routes
-    return [...directRoutes, ...connectingRoutes];
+    return transferRoutes;
+  },
+
+  // Calculate total distance
+  _calculateDistance: (stops) => {
+    return stops.reduce((total, stop, index) => {
+      if (index === 0) return 0;
+      return total + (parseFloat(stop.distanceFromPrevious) || 0);
+    }, 0);
+  },
+
+  // Calculate total time
+  _calculateTime: (stops) => {
+    return stops.reduce((total, stop, index) => {
+      if (index === 0) return 0;
+      return total + (parseInt(stop.estimatedTimeFromPrevious) || 0);
+    }, 0);
   }
 };

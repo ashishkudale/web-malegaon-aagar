@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import Header from '../../components/main/Header';
 import Footer from '../../components/main/Footer';
 import { stopService } from '../../services/stopService';
-import { routeService } from '../../services/routeService';
+import { graphService } from '../../services/graphService';
 
 const SearchRoutesPage = () => {
   const [allStops, setAllStops] = useState([]);
@@ -19,9 +18,7 @@ const SearchRoutesPage = () => {
 
   const loadStops = async () => {
     try {
-      // Use getAllStops instead of getActiveStops to avoid Firestore index requirement
       const stops = await stopService.getAllStops();
-      // Filter for active stops on the client side
       const activeStops = stops.filter(stop => stop.isActive !== false);
       setAllStops(activeStops);
     } catch (error) {
@@ -44,8 +41,16 @@ const SearchRoutesPage = () => {
     setSearched(true);
 
     try {
-      const results = await routeService.searchRoutes(fromStop, toStop);
+      const results = await graphService.searchAllRoutes(fromStop, toStop);
       setSearchResults(results);
+
+      // Smooth scroll to results after a short delay
+      setTimeout(() => {
+        const resultsSection = document.querySelector('.search-results');
+        if (resultsSection) {
+          resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 300);
     } catch (error) {
       console.error(error);
       alert('Error searching routes');
@@ -111,139 +116,103 @@ const SearchRoutesPage = () => {
                 disabled={searching}
                 className="btn-search"
               >
-                {searching ? 'Searching...' : 'Search Routes 🔍'}
+                {searching ? 'Searching All Routes...' : 'Find All Routes 🔍'}
               </button>
             </div>
           </div>
 
-          {searched && (
+          {searching && (
             <div className="search-results">
-              <h2>Search Results</h2>
+              <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+                <div style={{ fontSize: '48px', marginBottom: '20px' }}>🔍</div>
+                <h3 style={{ color: '#667eea', marginBottom: '10px' }}>Searching All Routes...</h3>
+                <p style={{ color: '#6b7280' }}>Finding the best paths between your stops</p>
+              </div>
+            </div>
+          )}
+
+          {searched && !searching && (
+            <div className="search-results">
+              <h2>All Possible Routes</h2>
               {searchResults.length === 0 ? (
                 <div className="no-results">
-                  <p>😔 No routes found between these stops.</p>
-                  <p className="marathi">या स्टॉप दरम्यान कोणतेही मार्ग आढळले नाहीत.</p>
+                  <div style={{ fontSize: '64px', marginBottom: '20px' }}>🚫</div>
+                  <p style={{ fontSize: '20px', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
+                    No routes found between these stops
+                  </p>
+                  <p className="marathi" style={{ fontSize: '16px', marginBottom: '20px' }}>
+                    या स्टॉप दरम्यान कोणतेही मार्ग आढळले नाहीत
+                  </p>
+                  <div style={{
+                    marginTop: '30px',
+                    padding: '20px',
+                    background: '#f3f4f6',
+                    borderRadius: '10px',
+                    maxWidth: '500px',
+                    margin: '30px auto 0'
+                  }}>
+                    <p style={{ color: '#6b7280', fontSize: '14px', margin: 0 }}>
+                      💡 <strong>Tip:</strong> Make sure these stops are connected in the admin panel.
+                      Check the Graph Visualization to see all available connections.
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <>
                   <p className="results-count">
-                    Found {searchResults.length} route(s) from <strong>{getStopName(fromStop)}</strong> to <strong>{getStopName(toStop)}</strong>
+                    Found <strong>{searchResults.length}</strong> possible route(s) from <strong>{getStopName(fromStop)}</strong> to <strong>{getStopName(toStop)}</strong>
                   </p>
 
                   <div className="routes-list">
-                    {searchResults.map((route, idx) => (
-                      <div key={route.id || `connecting-${idx}`} className="search-result-card">
-                        {route.routeType === 'direct' ? (
-                          // Direct route display
-                          <>
-                            <div className="result-header">
-                              <div className="route-badge">{route.routeNumber}</div>
-                              <div>
-                                <h3>{route.routeNameEnglish}</h3>
-                                <p className="marathi">{route.routeNameMarathi}</p>
-                              </div>
-                              <div className="result-fare">₹{route.fare}</div>
-                            </div>
-
-                            {route.direction === 'reverse' && (
-                              <div className="route-note" style={{ padding: '8px', backgroundColor: '#fff3cd', borderRadius: '4px', marginBottom: '12px' }}>
-                                ⚠️ {route.note}
-                              </div>
+                    {searchResults.map((result, index) => (
+                      <div key={index} className="search-result-card graph-route">
+                        <div className="route-header">
+                          <div className="route-badge">
+                            Route {index + 1}
+                            {result.isShortestPath && (
+                              <span className="fastest-badge">⚡ Shortest</span>
                             )}
+                          </div>
+                          <div className="route-stats">
+                            <span>📍 {result.totalStops} stops</span>
+                          </div>
+                        </div>
 
-                            <div className="result-journey">
-                              <p><strong>Your Journey:</strong></p>
-                              <div className="journey-stops">
-                                {route.stopsInJourney.map((stop, index) => (
-                                  <div key={stop.id} className="journey-stop">
-                                    <span className="journey-number">{index + 1}</span>
-                                    <span>{stop.stopDetails.stopNameEnglish}</span>
-                                    {index < route.stopsInJourney.length - 1 && (
-                                      <span className="journey-arrow">→</span>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                              <p className="stops-count">
-                                {route.stopsInJourney.length} stops
-                              </p>
-                            </div>
-
-                            <Link to={`/routes/${route.id}`} className="view-details-btn">
-                              View Full Route Details →
-                            </Link>
-                          </>
-                        ) : (
-                          // Connecting route display
-                          <>
-                            <div className="result-header" style={{ backgroundColor: '#e3f2fd' }}>
-                              <div style={{ flex: 1 }}>
-                                <h3 style={{ marginBottom: '4px' }}>🔄 Connecting Route (1 Transfer)</h3>
-                                <p style={{ fontSize: '14px', color: '#666' }}>बदली मार्ग</p>
-                              </div>
-                              <div className="result-fare">₹{route.totalFare}</div>
-                            </div>
-
-                            <div className="result-journey">
-                              {/* First Leg */}
-                              <div style={{ marginBottom: '16px' }}>
-                                <p><strong>Leg 1: Route {route.leg1.routeNumber}</strong></p>
-                                <div className="journey-stops">
-                                  {route.leg1.stopsInJourney.map((stop, index) => (
-                                    <div key={stop.id} className="journey-stop">
-                                      <span className="journey-number">{index + 1}</span>
-                                      <span>{stop.stopDetails.stopNameEnglish}</span>
-                                      {index < route.leg1.stopsInJourney.length - 1 && (
-                                        <span className="journey-arrow">→</span>
-                                      )}
-                                    </div>
-                                  ))}
+                        <div className="path-visualization">
+                          {result.stops && result.stops.map((stop, idx) => (
+                            <div key={idx} className="path-stop">
+                              <div className="stop-marker">
+                                {idx === 0 && <span className="marker-label">START</span>}
+                                {idx === result.stops.length - 1 && <span className="marker-label">END</span>}
+                                <div className={`stop-dot ${idx === 0 ? 'start' : idx === result.stops.length - 1 ? 'end' : ''}`}>
+                                  {idx + 1}
                                 </div>
-                                <p style={{ fontSize: '14px', color: '#666', marginTop: '4px' }}>
-                                  {route.leg1.stopsInJourney.length} stops · ₹{route.leg1.fare}
-                                </p>
+                                {idx < result.stops.length - 1 && (
+                                  <div className="connector-line"></div>
+                                )}
                               </div>
-
-                              {/* Transfer Point */}
-                              <div style={{ padding: '12px', backgroundColor: '#fff9c4', borderRadius: '4px', marginBottom: '16px', textAlign: 'center' }}>
-                                <strong>🚏 Transfer at: {route.transferStop.stopDetails.stopNameEnglish}</strong>
-                                <p style={{ fontSize: '13px', marginTop: '4px' }}>बदली करा</p>
+                              <div className="stop-details">
+                                <strong>{stop.stopNameEnglish}</strong>
+                                <p className="marathi-small">{stop.stopNameMarathi}</p>
+                                {stop.landmark && (
+                                  <p className="landmark">📍 {stop.landmark}</p>
+                                )}
                               </div>
-
-                              {/* Second Leg */}
-                              <div>
-                                <p><strong>Leg 2: Route {route.leg2.routeNumber}</strong></p>
-                                <div className="journey-stops">
-                                  {route.leg2.stopsInJourney.map((stop, index) => (
-                                    <div key={stop.id} className="journey-stop">
-                                      <span className="journey-number">{index + 1}</span>
-                                      <span>{stop.stopDetails.stopNameEnglish}</span>
-                                      {index < route.leg2.stopsInJourney.length - 1 && (
-                                        <span className="journey-arrow">→</span>
-                                      )}
-                                    </div>
-                                  ))}
-                                </div>
-                                <p style={{ fontSize: '14px', color: '#666', marginTop: '4px' }}>
-                                  {route.leg2.stopsInJourney.length} stops · ₹{route.leg2.fare}
-                                </p>
-                              </div>
-
-                              <p className="stops-count" style={{ marginTop: '12px' }}>
-                                Total: {route.leg1.stopsInJourney.length + route.leg2.stopsInJourney.length - 1} stops · 1 transfer
-                              </p>
                             </div>
+                          ))}
+                        </div>
 
-                            <div style={{ display: 'flex', gap: '8px' }}>
-                              <Link to={`/routes/${route.leg1.id}`} className="view-details-btn" style={{ flex: 1 }}>
-                                View Route {route.leg1.routeNumber} →
-                              </Link>
-                              <Link to={`/routes/${route.leg2.id}`} className="view-details-btn" style={{ flex: 1 }}>
-                                View Route {route.leg2.routeNumber} →
-                              </Link>
-                            </div>
-                          </>
-                        )}
+                        <div className="route-summary">
+                          <p>
+                            <strong>Complete Path:</strong><br />
+                            {result.stops && result.stops.map((s, i) => (
+                              <span key={i}>
+                                {s.stopNameEnglish}
+                                {i < result.stops.length - 1 && <span style={{ margin: '0 8px', color: '#667eea', fontWeight: 'bold' }}>→</span>}
+                              </span>
+                            ))}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>

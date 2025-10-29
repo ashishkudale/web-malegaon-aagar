@@ -12,6 +12,9 @@ import EditStop from './pages/admin/EditStop';
 import RoutesList from './pages/admin/RoutesList';
 import CreateRoute from './pages/admin/CreateRoute';
 import EditRoute from './pages/admin/EditRoute';
+import ConnectionsList from './pages/admin/ConnectionsList';
+import AddConnection from './pages/admin/AddConnection';
+import GraphVisualization from './pages/admin/GraphVisualization';
 import Sidebar from './components/admin/Sidebar';
 
 // Main Site Components
@@ -133,6 +136,39 @@ function App() {
               <ProtectedRoute>
                 <AdminLayout>
                   <EditRoute />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/connections"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <ConnectionsList />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/connections/add"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AddConnection />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/graph"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <GraphVisualization />
                 </AdminLayout>
               </ProtectedRoute>
             }

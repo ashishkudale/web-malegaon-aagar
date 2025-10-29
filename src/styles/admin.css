@@ -13,6 +13,7 @@
   position: fixed;
   height: 100vh;
   z-index: 1000;
+  overflow-y: auto;
 }
 
 .admin-content {
@@ -25,6 +26,10 @@
 .sidebar-header {
   padding: 30px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-header h2 {
+  font-size: 20px;
 }
 
 .sidebar-nav {
@@ -112,6 +117,10 @@
   max-width: 1200px;
 }
 
+.admin-page h1 {
+  font-size: 26px;
+}
+
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -120,6 +129,10 @@
   background: white;
   padding: 20px;
   border-radius: 8px;
+}
+
+.page-header h1 {
+  font-size: 26px;
 }
 
 .subtitle {
@@ -217,6 +230,7 @@
 /* Dashboard */
 .dashboard h1 {
   margin-bottom: 30px;
+  font-size: 26px;
 }
 
 .stats-grid {
@@ -542,5 +556,297 @@
 
   .stat-number {
     font-size: 24px;
+  }
+}
+
+/* ===== Navigation Sections ===== */
+.nav-section {
+  margin: 10px 0;
+}
+
+.nav-section-title {
+  padding: 10px 20px 5px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.nav-section a {
+  padding-left: 30px !important;
+}
+
+/* ===== Connection Visual ===== */
+.connection-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  padding: 40px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.connection-node {
+  text-align: center;
+}
+
+.node-circle {
+  width: 80px;
+  height: 80px;
+  background: #667eea;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin: 0 auto 10px;
+  font-size: 14px;
+}
+
+.connection-arrow {
+  font-size: 48px;
+  color: #667eea;
+}
+
+.help-text {
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+/* ===== Connections Grid ===== */
+.connections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.connection-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.connection-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.connection-visual-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.stop-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.node-dot {
+  width: 16px;
+  height: 16px;
+  background: #667eea;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.arrow-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+}
+
+.arrow-symbol {
+  font-size: 24px;
+}
+
+.connection-info {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.badge-bidirectional {
+  background: #27ae60;
+}
+
+.badge-oneway {
+  background: #f39c12;
+}
+
+.connection-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  margin-top: 30px;
+}
+
+.empty-state p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .connections-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .connection-visual {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .connection-arrow {
+    transform: rotate(90deg);
+  }
+}
+
+/* ===== Graph Visualization ===== */
+.graph-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-icon {
+  font-size: 36px;
+  margin-right: 15px;
+}
+
+.graph-container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.graph-container h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.graph-description {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+.graph-canvas {
+  margin-bottom: 30px;
+  overflow-x: auto;
+}
+
+.graph-legend {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.graph-legend h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 14px;
+}
+
+.legend-node {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  flex-shrink: 0;
+}
+
+.legend-line {
+  width: 40px;
+  height: 3px;
+  flex-shrink: 0;
+}
+
+.connections-table {
+  margin-top: 30px;
+}
+
+.connections-table h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.connections-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.connections-table th {
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+}
+
+.connections-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.connections-table tr:hover {
+  background: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .graph-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .graph-canvas svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .legend-items {
+    font-size: 12px;
+  }
+
+  .connections-table {
+    overflow-x: auto;
   }
 }
