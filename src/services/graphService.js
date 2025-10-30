@@ -34,7 +34,7 @@ export const graphService = {
   },
 
   // Find ALL possible paths using DFS
-  findAllPaths: (graph, start, end, maxDepth = 10) => {
+  findAllPaths: (graph, start, end, maxDepth = 100) => {
     const allPaths = [];
     const visited = new Set();
 
