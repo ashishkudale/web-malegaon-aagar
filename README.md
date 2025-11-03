@@ -43,7 +43,8 @@ A modern, bilingual (English + Marathi) web application for discovering bus rout
    ```
 
 2. **Set up environment variables**
-   - The `.env` file is already configured with your Firebase credentials
+   - Copy `.env.example` to `.env.local` and add your Firebase credentials
+   - The `.env.local` file is git-ignored for security
    - Admin email: `admin@malegaonaagar.com`
 
 3. **Set up Firebase** (See [FIREBASE_SETUP_GUIDE.md](FIREBASE_SETUP_GUIDE.md))
