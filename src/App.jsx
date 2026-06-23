@@ -15,6 +15,9 @@ import EditRoute from './pages/admin/EditRoute';
 import ConnectionsList from './pages/admin/ConnectionsList';
 import AddConnection from './pages/admin/AddConnection';
 import GraphVisualization from './pages/admin/GraphVisualization';
+import BusesList from './pages/admin/BusesList';
+import AddBus from './pages/admin/AddBus';
+import EditBus from './pages/admin/EditBus';
 import Sidebar from './components/admin/Sidebar';
 
 // Main Site Components
@@ -169,6 +172,39 @@ function App() {
               <ProtectedRoute>
                 <AdminLayout>
                   <GraphVisualization />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/buses"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <BusesList />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/buses/add"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AddBus />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/buses/edit/:busId"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <EditBus />
                 </AdminLayout>
               </ProtectedRoute>
             }
