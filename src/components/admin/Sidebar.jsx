@@ -33,6 +33,12 @@ const Sidebar = () => {
         </div>
 
         <div className="nav-section">
+          <p className="nav-section-title">Buses Management</p>
+          <Link to="/admin/buses">Manage Buses</Link>
+          <Link to="/admin/buses/add">Add Bus</Link>
+        </div>
+
+        <div className="nav-section">
           <p className="nav-section-title">Graph Management</p>
           <Link to="/admin/connections">All Connections</Link>
           <Link to="/admin/connections/add">Add Connection</Link>

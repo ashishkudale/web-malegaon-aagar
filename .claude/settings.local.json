@@ -16,7 +16,10 @@
       "Bash(git push)",
       "Bash(git log:*)",
       "Bash(pkill:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(grep -E \"^d|\\\\.json$|\\\\.ts$|\\\\.js$\")",
+      "Skill(run)",
+      "Skill(run:*)"
     ],
     "deny": [],
     "ask": []
